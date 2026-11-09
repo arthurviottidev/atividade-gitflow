@@ -1,9 +1,9 @@
 type Choice = 'rock' | 'paper' | 'scissors';
 
-const labels: Record<Choice, string> = {
-    rock: 'Pedra',
-    paper: 'Papel',
-    scissors: 'Tesoura',
+const options: Record<Choice, { label: string; icon: string }> = {
+    rock: { label: 'Pedra', icon: '✊' },
+    paper: { label: 'Papel', icon: '✋' },
+    scissors: { label: 'Tesoura', icon: '✌️' },
 };
 
 const beats: Record<Choice, Choice> = {
@@ -12,7 +12,7 @@ const beats: Record<Choice, Choice> = {
     scissors: 'paper',
 };
 
-const choices = Object.keys(labels) as Choice[];
+const choices = Object.keys(options) as Choice[];
 
 const buttonsEl = document.getElementById('buttons')!;
 const resultEl = document.getElementById('result')!;
@@ -27,24 +27,27 @@ function randomChoice(): Choice {
 
 function play(player: Choice): void {
     const cpu = randomChoice();
-    const matchup = `${labels[player]} x ${labels[cpu]}`;
+    const matchup = `${options[player].icon} x ${options[cpu].icon}`;
 
     if (player === cpu) {
-        resultEl.textContent = `${matchup}: empate`;
+        resultEl.textContent = `${matchup} empate`;
     } else if (beats[player] === cpu) {
         playerScore++;
-        resultEl.textContent = `${matchup}: você venceu`;
+        resultEl.textContent = `${matchup} você venceu`;
     } else {
         cpuScore++;
-        resultEl.textContent = `${matchup}: você perdeu`;
+        resultEl.textContent = `${matchup} você perdeu`;
     }
 
     scoreEl.textContent = `Você ${playerScore} x ${cpuScore} CPU`;
 }
 
 choices.forEach((choice) => {
+    const { label, icon } = options[choice];
     const button = document.createElement('button');
-    button.textContent = labels[choice];
+    button.textContent = icon;
+    button.title = label;
+    button.setAttribute('aria-label', label);
     button.addEventListener('click', () => play(choice));
     buttonsEl.appendChild(button);
 });
